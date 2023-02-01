@@ -1,11 +1,21 @@
 package lox;
 import java.util.List;
 import static lox.TokenType.*;
+
 public class Parser {
+    private static class ParseError extends RuntimeException{};
     private final List<Token> tokens;
     private int current=0;
     Parser(List<Token> tokens){
         this.tokens=tokens;
+    }
+
+    Expr parse(){
+        try {
+            return expression();
+        }catch (ParseError error){
+            return null;
+        }
     }
 
     private Expr expression(){
@@ -13,7 +23,7 @@ public class Parser {
     }
 
     private Expr equality(){
-        Expr expr=compariso();
+        Expr expr=comparison();
         while(match(BANG_EQUAL,EQUAL_EQUAL)){
             Token operator = previous();
             Expr right= comparison();
@@ -64,28 +74,27 @@ public class Parser {
 
     private Expr primary(){
         if (match(FALSE)){
-            return  new Expr.Literal(false);
+            return new Expr.Literal(false);
         }
         if (match(TRUE)){
-            return  new Expr.Literal(true);
+            return new Expr.Literal(true);
         }
         if (match(NIL)){
-            return  new Expr.Literal(null);
+            return new Expr.Literal(null);
         }
 
         if (match(STRING,NUMBER)){
-            return  new Expr.Literal(previous().literal);
+            return new Expr.Literal(previous().literal);
         }
 
         if (match(LEFT_PAREN)){
             Expr expr=expression();
             consume(RIGHT_PAREN,"Expect ')' after expression.");
-            return  new Expr.Grouping(expr);
+            return new Expr.Grouping(expr);
         }
 
+        throw error(peek(),"Expect expression.");
     }
-
-
 
     private boolean match(TokenType... types){
         for(TokenType type:types){
@@ -95,6 +104,13 @@ public class Parser {
             }
         }
         return false;
+    }
+
+    private Token consume(TokenType type, String message){
+        if (check(type)){
+            return advance();
+        }
+        throw error(peek(),message);
     }
 
     private boolean check(TokenType type){
@@ -118,4 +134,34 @@ public class Parser {
     private Token previous(){
         return tokens.get(current-1);
     }
+    private ParseError error(Token token, String message){
+        Lox.error(token,message);
+        return new ParseError();
+    }
+
+    private void synchronize(){
+        advance();
+        while (!isAtEnd()){
+            if (previous().type==SEMICOLON){
+                return;
+            }
+
+            switch (peek().type){
+                case CLASS:
+                case FOR:
+                case FUN:
+                case IF:
+                case PRINT:
+                case RETURN:
+                case VAR:
+                case WHILE:{
+                    return;
+                }
+            }
+            advance();
+        }
+    }
+
+
 }
+
