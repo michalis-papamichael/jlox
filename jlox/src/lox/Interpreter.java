@@ -78,6 +78,13 @@ class Interpreter implements Expr.Visitor<Object>{
                 if (left instanceof String && right instanceof String){
                     return (String)left+(String) right;
                 }
+//                #Chalenge 7.2
+//                if (left instanceof String && right instanceof Double){
+//                    return (String)left+String.valueOf((double)right);
+//                }
+//                if (left instanceof Double && right instanceof String){
+//                    return String.valueOf((double)left)+(String)right;
+//                }
                 throw new RuntimeError(expr.operator,"Operands must be two numbs or two strings");
             }
             case SLASH:{
@@ -127,6 +134,10 @@ class Interpreter implements Expr.Visitor<Object>{
 
     private void checkNumberOperands(Token operator,Object left,Object right){
         if (left instanceof Double && right instanceof Double){
+//            #Challenge 7.3
+//            if ((double)right==0){
+//                throw new RuntimeError(operator,"Denominator should not be zero");
+//            }
             return;
         }
         throw new RuntimeError(operator,"Operands must be numbers");
