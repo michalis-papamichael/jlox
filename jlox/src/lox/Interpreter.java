@@ -21,6 +21,23 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     }
 
     @Override
+    public Object visitLogicalExpr(Expr.Logical expr) {
+        Object left = evalute(expr.left);
+
+        if (expr.operator.type==TokenType.OR){
+            if (isTruthy(left)){
+                return left;
+            }
+        }else {
+            if (!isTruthy(left)){
+                return left;
+            }
+        }
+
+        return evalute(expr.right);
+    }
+
+    @Override
     public Object visitGroupingExpr(Expr.Grouping expr) {
         return evalute(expr.expression);
     }
@@ -167,6 +184,14 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         }
 
         environment.define(stmt.name.lexeme,value);
+        return null;
+    }
+
+    @Override
+    public Void visitWhileStmt(Stmt.While stmt) {
+        while (isTruthy(evalute(stmt.condition))){
+            execute(stmt.body);
+        }
         return null;
     }
 
