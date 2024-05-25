@@ -1,4 +1,13 @@
-var b=3;
-for(var i=0; i<3; i=i+1){
-    print i;
+class breakfast{
+    init(){
+        this.eggs=2;
+        return;
+        this.eggs=5;
+    }
+    doubleEggs(){
+        this.eggs=this.eggs*2;
+    }
 }
+breakfast=breakfast();
+breakfast.doubleEggs();
+print breakfast.eggs;
