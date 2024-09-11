@@ -1,13 +1,22 @@
-class breakfast{
-    init(){
-        this.eggs=2;
-        return;
-        this.eggs=5;
-    }
-    doubleEggs(){
-        this.eggs=this.eggs*2;
+class A{
+    method(){
+        print "A method.";
     }
 }
-breakfast=breakfast();
-breakfast.doubleEggs();
-print breakfast.eggs;
+
+class B<A{
+    method(){
+        print "B method.";
+    }
+    test(){
+        super.method();
+    }
+}
+class C<B{}
+class D{
+    method(){
+        super.method();
+    }
+}
+C().method();
+C().test();
