@@ -13,10 +13,11 @@ class B<A{
     }
 }
 class C<B{}
-class D{
+/class D{
     method(){
         super.method();
     }
 }
-C().method();
 C().test();
+C().method();
+

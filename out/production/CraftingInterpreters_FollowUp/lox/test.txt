@@ -15,8 +15,9 @@ class B<A{
 class C<B{}
 class D{
     method(){
-        super.method();
+        //super.method();
     }
 }
-C().method();
 C().test();
+C().method();
+
